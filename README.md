@@ -1,6 +1,9 @@
 
 # m1c
 
+- Gather utteranceRate and maxAge into gameSettings.
+  - They should be updatable from url params as well
+- add a "Game Settings" button to modify gameSettings.
 
 # m1b
 

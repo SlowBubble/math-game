@@ -7,7 +7,10 @@ const people = [
 ];
 
 const urlParams = new URLSearchParams(window.location.search);
-const maxAge = parseInt(urlParams.get('max')) || 8;
+const gameSettings = {
+    maxAge: parseInt(urlParams.get('maxAge')) || 8,
+    utteranceRate: parseFloat(urlParams.get('utteranceRate')) || 0.2
+};
 
 let state = 'waiting'; // 'waiting' or 'answering'
 let currentQuestion = null;
@@ -15,7 +18,7 @@ let userAnswer = '';
 
 function speak(text, onEnd) {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.2;
+    utterance.rate = gameSettings.utteranceRate;
     if (onEnd) {
         utterance.onend = onEnd;
     }
@@ -38,7 +41,7 @@ function generateQuestion() {
     const younger = getYoungerPerson();
     const older = getOlderPerson();
     const minAge = younger.age;
-    const N = Math.floor(Math.random() * (maxAge - minAge - 1)) + minAge + 1;
+    const N = Math.floor(Math.random() * (gameSettings.maxAge - minAge - 1)) + minAge + 1;
     const ageDifference = older.age - younger.age;
     const correctAnswer = N + ageDifference;
     
@@ -67,7 +70,7 @@ function draw() {
     clearCanvas();
     
     if (state === 'waiting') {
-        drawText('Press Space', 50, canvas.height / 2, 60);
+        drawText('Press Space', 50, canvas.height / 2, 72);
     } else if (state === 'answering' || state === 'incorrect' || state === 'correct') {
         if (userAnswer) {
             const answer = parseInt(userAnswer);
@@ -77,9 +80,9 @@ function draw() {
             } else if (answer < currentQuestion.correctAnswer) {
                 symbol = '>';
             }
-            drawText(`${currentQuestion.N} + ${currentQuestion.ageDifference} ${symbol} ${userAnswer}`, 50, canvas.height / 2, 80);
+            drawText(`${currentQuestion.N} + ${currentQuestion.ageDifference} ${symbol} ${userAnswer}`, 50, canvas.height / 2, 96);
         } else {
-            drawText(`${currentQuestion.N} + ${currentQuestion.ageDifference}`, 50, canvas.height / 2, 80);
+            drawText(`${currentQuestion.N} + ${currentQuestion.ageDifference}`, 50, canvas.height / 2, 96);
         }
     }
 }
@@ -140,6 +143,44 @@ document.getElementById('personalDataBtn').addEventListener('click', () => {
                 return true;
             } else {
                 alert('Invalid format: must be an array');
+                return false;
+            }
+        } catch (e) {
+            alert('Invalid JSON: ' + e.message);
+            return false;
+        }
+    });
+});
+
+function updateURLParams() {
+    const params = new URLSearchParams();
+    if (gameSettings.maxAge !== 8) {
+        params.set('maxAge', gameSettings.maxAge);
+    }
+    if (gameSettings.utteranceRate !== 0.2) {
+        params.set('utteranceRate', gameSettings.utteranceRate);
+    }
+    const newURL = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
+    window.history.replaceState({}, '', newURL);
+}
+
+document.getElementById('gameSettingsBtn').addEventListener('click', () => {
+    const content = `
+        <h2>Game Settings (JSON)</h2>
+        <textarea id="settingsData">${JSON.stringify(gameSettings, null, 2)}</textarea>
+        <p style="color: #666; font-size: 14px;">Press Enter to save, Escape to cancel</p>
+    `;
+    
+    createModal(content, (modal) => {
+        const textarea = modal.querySelector('#settingsData');
+        try {
+            const newSettings = JSON.parse(textarea.value);
+            if (typeof newSettings === 'object' && !Array.isArray(newSettings)) {
+                Object.assign(gameSettings, newSettings);
+                updateURLParams();
+                return true;
+            } else {
+                alert('Invalid format: must be an object');
                 return false;
             }
         } catch (e) {
