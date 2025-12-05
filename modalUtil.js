@@ -18,8 +18,11 @@ function createModal(content, onSubmit) {
         background: white;
         padding: 30px;
         border-radius: 8px;
-        min-width: 400px;
-        max-width: 600px;
+        min-width: 700px;
+        max-width: 800px;
+        width: 100%;
+        min-height: 400px;
+        font-size: 1.5em;
     `;
 
     modal.innerHTML = content;

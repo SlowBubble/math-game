@@ -141,7 +141,7 @@ document.addEventListener('keydown', (e) => {
 document.getElementById('personalDataBtn').addEventListener('click', () => {
     const content = `
         <h2>Personal Data (JSON)</h2>
-        <textarea id="peopleData">${JSON.stringify(people, null, 2)}</textarea>
+        <textarea id="peopleData" style="font-size: 1.5em; width: 100%; min-height: 400px;">${JSON.stringify(people, null, 2)}</textarea>
         <p style="color: #666; font-size: 14px;">Press Enter to save, Escape to cancel</p>
     `;
     
@@ -179,7 +179,7 @@ function updateURLParams() {
 document.getElementById('gameSettingsBtn').addEventListener('click', () => {
     const content = `
         <h2>Game Settings (JSON)</h2>
-        <textarea id="settingsData">${JSON.stringify(gameSettings, null, 2)}</textarea>
+        <textarea id="settingsData" style="font-size: 1.5em; width: 100%; min-height: 400px;">${JSON.stringify(gameSettings, null, 2)}</textarea>
         <p style="color: #666; font-size: 14px;">Press Enter to save, Escape to cancel</p>
     `;
     
