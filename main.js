@@ -6,13 +6,16 @@ const people = [
     { name: "Bingo", age: 3 }
 ];
 
+const urlParams = new URLSearchParams(window.location.search);
+const maxAge = parseInt(urlParams.get('max')) || 8;
+
 let state = 'waiting'; // 'waiting' or 'answering'
 let currentQuestion = null;
 let userAnswer = '';
 
 function speak(text, onEnd) {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.1;
+    utterance.rate = 0.2;
     if (onEnd) {
         utterance.onend = onEnd;
     }
@@ -35,7 +38,7 @@ function generateQuestion() {
     const younger = getYoungerPerson();
     const older = getOlderPerson();
     const minAge = younger.age;
-    const N = Math.floor(Math.random() * (8 - minAge - 1)) + minAge + 1;
+    const N = Math.floor(Math.random() * (maxAge - minAge - 1)) + minAge + 1;
     const ageDifference = older.age - younger.age;
     const correctAnswer = N + ageDifference;
     
