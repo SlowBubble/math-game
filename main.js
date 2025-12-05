@@ -95,28 +95,58 @@ document.addEventListener('keydown', (e) => {
         draw();
     } else if (state === 'answering' || state === 'incorrect') {
         if (e.key >= '0' && e.key <= '9') {
-            userAnswer = e.key;
+            userAnswer += e.key;
             draw();
-            const answer = parseInt(userAnswer);
             
-            if (answer === currentQuestion.correctAnswer) {
-                state = 'correct';
-                const successMsg = `Very nice. When ${currentQuestion.younger.name} is ${currentQuestion.N}, ${currentQuestion.older.name} will be ${currentQuestion.correctAnswer}.`;
-                speak(successMsg, () => {
-                    state = 'waiting';
-                    userAnswer = '';
-                    draw();
-                });
-            } else {
-                state = 'incorrect';
-                speak('Incorrect. Please try again.', () => {
-                    userAnswer = '';
-                    state = 'answering';
-                    draw();
-                });
+            const correctDigits = currentQuestion.correctAnswer.toString().length;
+            if (userAnswer.length === correctDigits) {
+                const answer = parseInt(userAnswer);
+                
+                if (answer === currentQuestion.correctAnswer) {
+                    state = 'correct';
+                    const successMsg = `Very nice. When ${currentQuestion.younger.name} is ${currentQuestion.N}, ${currentQuestion.older.name} will be ${currentQuestion.correctAnswer}.`;
+                    speak(successMsg, () => {
+                        state = 'waiting';
+                        userAnswer = '';
+                        draw();
+                    });
+                } else {
+                    state = 'incorrect';
+                    speak('Incorrect. Please try again.', () => {
+                        userAnswer = '';
+                        state = 'answering';
+                        draw();
+                    });
+                }
             }
         }
     }
+});
+
+document.getElementById('personalDataBtn').addEventListener('click', () => {
+    const content = `
+        <h2>Personal Data (JSON)</h2>
+        <textarea id="peopleData">${JSON.stringify(people, null, 2)}</textarea>
+        <p style="color: #666; font-size: 14px;">Press Enter to save, Escape to cancel</p>
+    `;
+    
+    createModal(content, (modal) => {
+        const textarea = modal.querySelector('#peopleData');
+        try {
+            const newPeople = JSON.parse(textarea.value);
+            if (Array.isArray(newPeople)) {
+                people.length = 0;
+                people.push(...newPeople);
+                return true;
+            } else {
+                alert('Invalid format: must be an array');
+                return false;
+            }
+        } catch (e) {
+            alert('Invalid JSON: ' + e.message);
+            return false;
+        }
+    });
 });
 
 draw();

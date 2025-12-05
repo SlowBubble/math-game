@@ -1,4 +1,13 @@
 
+# m1c
+
+
+# m1b
+
+- add a "Personal Data" button. When pressed, open up a modal that display the `people` param in pretty JSON string that can be edited.
+  - Create a modalUtil.js since we will use it for other modals.
+  - When the user press 'enter', update the `people` param using the things in the modal.
+
 # m1a
 
 Build a math game using index.html and main.js using a canvas
