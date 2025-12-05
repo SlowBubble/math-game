@@ -15,6 +15,7 @@ const gameSettings = {
 let state = 'waiting'; // 'waiting' or 'answering'
 let currentQuestion = null;
 let userAnswer = '';
+let isFirstQuestion = true;
 
 function speak(text, onEnd) {
     const utterance = new SpeechSynthesisUtterance(text);
@@ -94,7 +95,18 @@ document.addEventListener('keydown', (e) => {
         currentQuestion = generateQuestion();
         userAnswer = '';
         state = 'answering';
-        speak(currentQuestion.question);
+        
+        if (isFirstQuestion) {
+            isFirstQuestion = false;
+            speak("Welcome to The Age is Right!", () => {
+                window.setTimeout(_ => {
+                    speak(currentQuestion.question);
+                }, 700);
+            });
+        } else {
+            speak(currentQuestion.question);
+        }
+        
         draw();
     } else if (state === 'answering' || state === 'incorrect') {
         if (e.key >= '0' && e.key <= '9') {
